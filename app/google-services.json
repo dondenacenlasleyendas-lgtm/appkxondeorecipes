@@ -1,26 +1,82 @@
 {
   "project_info": {
-    "project_number": "980231189754",
-    "project_id": "com-example-appkxondeore-6eb23",
-    "storage_bucket": "com-example-appkxondeore-6eb23.firebasestorage.app"
+    "project_number": "231799714158",
+    "firebase_url": "https://kxondeo-recipes-default-rtdb.firebaseio.com",
+    "project_id": "kxondeo-recipes",
+    "storage_bucket": "kxondeo-recipes.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980231189754:android:1a314ab12c2b8dc9404543",
+        "mobilesdk_app_id": "1:231799714158:android:d0a7450671378025d5917f",
         "android_client_info": {
-          "package_name": "com.kxondeo.appkxondeorecipes"
+          "package_name": "com.kxondeo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "231799714158-21grbq641ildon5gn3ncg3p6pvq58o4d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kxondeo",
+            "certificate_hash": "619e146a87032cdd6a38d5e98a563a04ac874ac4"
+          }
+        },
+        {
+          "client_id": "231799714158-8rjrr68r6vdnvkpgcrs6968nplq63aqj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kxondeo",
+            "certificate_hash": "6835c9e2c877a6ba1ecfa5e1b23975ab27718e13"
+          }
+        },
+        {
+          "client_id": "231799714158-1detg64q2t7a7v4rbkrtgjsj0983bg6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDW-fz2qJPuYDQhC5k5YVipWBqqFyKGeoM"
+          "current_key": "AIzaSyCviWk0jvqbGfcz4fsmd5oXRFf0iGRc0Z4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231799714158-1detg64q2t7a7v4rbkrtgjsj0983bg6t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231799714158:android:9f7692347ee99d04d5917f",
+        "android_client_info": {
+          "package_name": "com.kxondeo.appkxondeorecipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231799714158-1detg64q2t7a7v4rbkrtgjsj0983bg6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCviWk0jvqbGfcz4fsmd5oXRFf0iGRc0Z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231799714158-1detg64q2t7a7v4rbkrtgjsj0983bg6t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
