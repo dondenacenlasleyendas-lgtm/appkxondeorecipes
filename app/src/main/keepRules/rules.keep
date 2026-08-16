@@ -1,0 +1,22 @@
+# Add project specific R8 rules here.
+# AGP will combine all keep rule files in src/main/keepRules to pass to R8
+#
+# For more details, see
+#   https://d.android.com/r/tools/r8/keep-rules
+
+# Kotlin Serialization
+-keepattributes *Annotation*, EnclosingMethod, Signature
+-keep,allowobfuscation,allowshrinking class kotlinx.serialization.json.** { *; }
+-keepclassmembers class com.kxondeo.appkxondeorecipes.** {
+    *** Companion;
+    *** $serializer;
+}
+-keep @kotlinx.serialization.Serializable class com.kxondeo.appkxondeorecipes.** { *; }
+
+# Firebase Firestore
+-keepattributes *Annotation*
+-keepclassmembers class com.kxondeo.appkxondeorecipes.** {
+  @com.google.firebase.firestore.PropertyName <fields>;
+  @com.google.firebase.firestore.PropertyName <methods>;
+}
+-keep class com.kxondeo.appkxondeorecipes.** { *; }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "980231189754",
+    "project_id": "com-example-appkxondeore-6eb23",
+    "storage_bucket": "com-example-appkxondeore-6eb23.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980231189754:android:1a314ab12c2b8dc9404543",
+        "android_client_info": {
+          "package_name": "com.kxondeo.appkxondeorecipes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW-fz2qJPuYDQhC5k5YVipWBqqFyKGeoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
