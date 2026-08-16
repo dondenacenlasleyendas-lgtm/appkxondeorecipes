@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Folder(
-    val id: Int,
-    val nameEs: String,
-    val nameEn: String,
+    val id: Int = 0,
+    val nameEs: String = "",
+    val nameEn: String = "",
     val parentFolderId: Int? = null
 ) {
     fun getName(isSpanish: Boolean): String = if (isSpanish) nameEs else nameEn
@@ -14,20 +14,20 @@ data class Folder(
 
 @Serializable
 data class Recipe(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val ingredients: List<String>,
-    val steps: List<String>,
-    val portions: Int,
+    val id: Int = 0,
+    val title: String = "",
+    val description: String = "",
+    val ingredients: List<String> = emptyList(),
+    val steps: List<String> = emptyList(),
+    val portions: Int = 0,
     val folderId: Int? = null,
     val imageUrl: String = ""
 )
 
 @Serializable
 data class TeamMember(
-    val uid: String,
-    val name: String
+    val uid: String = "",
+    val name: String = ""
 )
 
 @Serializable

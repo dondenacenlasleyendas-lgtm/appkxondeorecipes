@@ -80,15 +80,37 @@ object FirebaseManager {
     }
 
     fun getTeams(): Flow<List<TeamMember>> = callbackFlow {
-        // Mock implementation for now, adjust based on real logic if needed
-        trySend(emptyList())
-        awaitClose {}
+        val subscription = db.collection("users")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val members = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(TeamMember::class.java)
+                } ?: emptyList()
+                trySend(members)
+            }
+        awaitClose { subscription.remove() }
     }
 
     fun addTeamMember(uid: String, name: String, onComplete: () -> Unit) {
-        onComplete()
+        val member = TeamMember(uid, name)
+        db.collection("users").document(uid).set(member)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener { e -> Log.e("Firebase", "Error adding member", e) }
     }
 
     fun sendToUser(uid: String, pkg: KxondeoSharePackage) {
+        val shareId = "SHARE-" + System.currentTimeMillis()
+        val data = hashMapOf(
+            "recipientUid" to uid,
+            "folder" to pkg.folder,
+            "recipes" to pkg.recipes,
+            "timestamp" to System.currentTimeMillis()
+        )
+        db.collection(COLLECTION_SHARES).document(shareId).set(data)
+            .addOnSuccessListener { Log.d("Firebase", "Shared with user $uid") }
+            .addOnFailureListener { e -> Log.e("Firebase", "Error sharing with user", e) }
     }
 }
