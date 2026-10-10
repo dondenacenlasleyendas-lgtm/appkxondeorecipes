@@ -27,6 +27,7 @@ fun FoodCostScreen(
     foodCosts: List<FoodCost>,
     folders: List<Folder>,
     appLanguage: AppLanguage,
+    onMenuClick: () -> Unit,
     onBack: () -> Unit,
     onFoodCostClick: (FoodCost) -> Unit,
     onAddFoodCost: () -> Unit,
@@ -52,8 +53,11 @@ fun FoodCostScreen(
             TopAppBar(
                 title = { Text(currentFolder?.getName(isSpanish) ?: t(appLanguage, "Food Cost", "Escandallos", "Chi phí thực phẩm", "Matkostnad"), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = { if (currentFolderId == null) onBack() else currentFolderId = currentFolder?.parentFolderId }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = { if (currentFolderId == null) onMenuClick() else currentFolderId = currentFolder?.parentFolderId }) {
+                        Icon(
+                            if (currentFolderId == null) Icons.Default.Menu else Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Menu"
+                        )
                     }
                 },
                 actions = {

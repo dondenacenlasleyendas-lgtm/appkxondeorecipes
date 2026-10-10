@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.kxondeo.appkxondeorecipes.ui.theme.KxondeoTheme
+import kotlinx.coroutines.launch
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -22,8 +22,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val context = LocalContext.current
+                    val scope = rememberCoroutineScope()
+                    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
                     var currentScreen by remember { mutableStateOf("main") }
                     var appLanguage by remember { mutableStateOf(AppLanguage.Spanish) }
+                    var isDarkMode by remember { mutableStateOf(false) }
 
                     val foodCosts = remember {
                         mutableStateListOf(
@@ -43,66 +47,115 @@ class MainActivity : ComponentActivity() {
                     var selectedCookbook by remember { mutableStateOf<CookbookPdf?>(null) }
                     var cookbookForExtraction by remember { mutableStateOf<CookbookPdf?>(null) }
 
-                    when (currentScreen) {
-                        "splash" -> SplashScreen(onNext = { currentScreen = "login" })
-                        "login" -> LoginScreen(onLoginSuccess = { currentScreen = "main" })
-                        "main" -> FoodCostScreen(
-                            foodCosts = foodCosts,
-                            folders = folders,
-                            appLanguage = appLanguage,
-                            onBack = { currentScreen = "login" },
-                            onFoodCostClick = {},
-                            onAddFoodCost = {},
-                            onAddFolder = { name, parentId ->
-                                val newId = (folders.maxOfOrNull { it.id } ?: 0) + 1
-                                folders.add(Folder(newId, name, name, parentId))
-                            },
-                            onDeleteFolder = { folderId ->
-                                folders.removeAll { it.id == folderId }
-                            },
-                            onDeleteFoodCost = { costId ->
-                                foodCosts.removeAll { it.id == costId }
-                            },
-                            onMoveFoodCost = { _, _ -> },
-                            onOpenCookbooks = { currentScreen = "cookbooks" }
-                        )
-                        "cookbooks" -> CookbookFolderScreen(
-                            cookbooks = cookbooks,
-                            appLanguage = appLanguage,
-                            onBack = { currentScreen = "main" },
-                            onAddCookbook = { uri ->
-                                val cookbook = PdfManager.savePdfToInternalStorage(context, uri)
-                                if (cookbook != null) {
-                                    cookbooks.add(cookbook)
-                                }
-                            },
-                            onOpenCookbook = { cookbook ->
-                                selectedCookbook = cookbook
-                                currentScreen = "pdf_viewer"
-                            },
-                            onExtractRecipes = { cookbook ->
-                                cookbookForExtraction = cookbook
-                            },
-                            onDeleteCookbook = { cookbookId ->
-                                cookbooks.find { it.id == cookbookId }?.let { cb ->
-                                    try {
-                                        File(cb.localFilePath).delete()
-                                    } catch (_: Exception) {}
-                                    cookbooks.remove(cb)
-                                }
-                            }
-                        )
-                        "pdf_viewer" -> {
-                            selectedCookbook?.let { cb ->
-                                PdfViewerScreen(
-                                    cookbook = cb,
-                                    appLanguage = appLanguage,
-                                    onBack = { currentScreen = "cookbooks" },
-                                    onExtractRecipes = { cookbook ->
-                                        cookbookForExtraction = cookbook
+                    val onOpenDrawer: () -> Unit = {
+                        scope.launch { drawerState.open() }
+                    }
+
+                    val onNavigateDrawer: (String) -> Unit = { screen ->
+                        currentScreen = screen
+                        scope.launch { drawerState.close() }
+                    }
+
+                    AppNavigationDrawer(
+                        drawerState = drawerState,
+                        currentScreen = currentScreen,
+                        appLanguage = appLanguage,
+                        onNavigate = onNavigateDrawer
+                    ) {
+                        when (currentScreen) {
+                            "splash" -> SplashScreen(onNext = { currentScreen = "login" })
+                            "login" -> LoginScreen(onLoginSuccess = { currentScreen = "main" })
+                            "main" -> FoodCostScreen(
+                                foodCosts = foodCosts,
+                                folders = folders,
+                                appLanguage = appLanguage,
+                                onMenuClick = onOpenDrawer,
+                                onBack = { currentScreen = "login" },
+                                onFoodCostClick = {},
+                                onAddFoodCost = {},
+                                onAddFolder = { name, parentId ->
+                                    val newId = (folders.maxOfOrNull { it.id } ?: 0) + 1
+                                    folders.add(Folder(newId, name, name, parentId))
+                                },
+                                onDeleteFolder = { folderId ->
+                                    folders.removeAll { it.id == folderId }
+                                },
+                                onDeleteFoodCost = { costId ->
+                                    foodCosts.removeAll { it.id == costId }
+                                },
+                                onMoveFoodCost = { _, _ -> },
+                                onOpenCookbooks = { currentScreen = "cookbooks" }
+                            )
+                            "cookbooks" -> CookbookFolderScreen(
+                                cookbooks = cookbooks,
+                                appLanguage = appLanguage,
+                                onBack = { currentScreen = "main" },
+                                onAddCookbook = { uri ->
+                                    val cookbook = PdfManager.savePdfToInternalStorage(context, uri)
+                                    if (cookbook != null) {
+                                        cookbooks.add(cookbook)
                                     }
-                                )
-                            } ?: LaunchedEffect(Unit) { currentScreen = "cookbooks" }
+                                },
+                                onOpenCookbook = { cookbook ->
+                                    selectedCookbook = cookbook
+                                    currentScreen = "pdf_viewer"
+                                },
+                                onExtractRecipes = { cookbook ->
+                                    cookbookForExtraction = cookbook
+                                },
+                                onDeleteCookbook = { cookbookId ->
+                                    cookbooks.find { it.id == cookbookId }?.let { cb ->
+                                        try {
+                                            File(cb.localFilePath).delete()
+                                        } catch (_: Exception) {}
+                                        cookbooks.remove(cb)
+                                    }
+                                }
+                            )
+                            "pdf_viewer" -> {
+                                selectedCookbook?.let { cb ->
+                                    PdfViewerScreen(
+                                        cookbook = cb,
+                                        appLanguage = appLanguage,
+                                        onBack = { currentScreen = "cookbooks" },
+                                        onExtractRecipes = { cookbook ->
+                                            cookbookForExtraction = cookbook
+                                        }
+                                    )
+                                } ?: LaunchedEffect(Unit) { currentScreen = "cookbooks" }
+                            }
+                            "menu_planner" -> MenuPlannerScreen(
+                                foodCosts = foodCosts,
+                                appLanguage = appLanguage,
+                                onMenuClick = onOpenDrawer
+                            )
+                            "timer" -> TimerScreen(
+                                appLanguage = appLanguage,
+                                onMenuClick = onOpenDrawer
+                            )
+                            "salary_calculator" -> SalaryCalculatorScreen(
+                                appLanguage = appLanguage,
+                                onMenuClick = onOpenDrawer
+                            )
+                            "teams" -> TeamsScreen(
+                                isSpanish = appLanguage == AppLanguage.Spanish,
+                                recipes = emptyList(),
+                                folders = folders,
+                                onBack = { currentScreen = "main" }
+                            )
+                            "profile" -> ProfileScreen(
+                                userId = "USER-KX9821",
+                                appLanguage = appLanguage,
+                                onBack = { currentScreen = "main" }
+                            )
+                            "settings" -> SettingsScreen(
+                                isDarkMode = isDarkMode,
+                                onDarkModeToggle = { isDarkMode = it },
+                                isSpanish = appLanguage == AppLanguage.Spanish,
+                                onLanguageToggle = { isSpanish ->
+                                    appLanguage = if (isSpanish) AppLanguage.Spanish else AppLanguage.English
+                                }
+                            )
                         }
                     }
 
