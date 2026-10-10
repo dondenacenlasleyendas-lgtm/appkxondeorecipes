@@ -102,7 +102,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { if (email.isNotBlank() && password.isNotBlank()) onLoginSuccess() },
+            onClick = onLoginSuccess,
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
         ) {

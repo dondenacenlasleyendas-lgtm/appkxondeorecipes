@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val context = LocalContext.current
-                    var currentScreen by remember { mutableStateOf("splash") }
+                    var currentScreen by remember { mutableStateOf("main") }
                     var appLanguage by remember { mutableStateOf(AppLanguage.Spanish) }
 
                     val foodCosts = remember {
