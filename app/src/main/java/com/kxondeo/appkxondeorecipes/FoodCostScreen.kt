@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,7 +31,8 @@ fun FoodCostScreen(
     onAddFolder: (String, Int?) -> Unit,
     onDeleteFolder: (Int) -> Unit,
     onDeleteFoodCost: (Int) -> Unit,
-    onMoveFoodCost: (Int, Int?) -> Unit
+    onMoveFoodCost: (Int, Int?) -> Unit,
+    onOpenCookbooks: (() -> Unit)? = null
 ) {
     var currentFolderId by remember { mutableStateOf<Int?>(null) }
     var showAddFolderDialog by remember { mutableStateOf(false) }
@@ -67,6 +69,18 @@ fun FoodCostScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
+                if (currentFolderId == null && onOpenCookbooks != null) {
+                    item {
+                        ListItem(
+                            headlineContent = { Text(if (isSpanish) "Libros de Cocina (PDF)" else "Cookbooks (PDF)", fontWeight = FontWeight.Bold) },
+                            supportingContent = { Text(if (isSpanish) "Cargar y previsualizar PDFs, extraer recetas" else "Upload & preview PDFs, extract recipes") },
+                            leadingContent = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = KxRed) },
+                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
+                            modifier = Modifier.clickable { onOpenCookbooks() }
+                        )
+                        HorizontalDivider()
+                    }
+                }
                 items(subfolders) { folder ->
                     ListItem(
                         headlineContent = { Text(folder.getName(isSpanish)) },

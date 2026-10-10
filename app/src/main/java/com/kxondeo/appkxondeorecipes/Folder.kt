@@ -7,10 +7,21 @@ data class Folder(
     val id: Int = 0,
     val nameEs: String = "",
     val nameEn: String = "",
-    val parentFolderId: Int? = null
+    val parentFolderId: Int? = null,
+    val isCookbookFolder: Boolean = false
 ) {
     fun getName(isSpanish: Boolean): String = if (isSpanish) nameEs else nameEn
 }
+
+@Serializable
+data class CookbookPdf(
+    val id: String = "",
+    val title: String = "",
+    val localFilePath: String = "",
+    val pageCount: Int = 0,
+    val folderId: Int? = null,
+    val addedTimestamp: Long = System.currentTimeMillis()
+)
 
 @Serializable
 data class Recipe(
