@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.PostAdd
@@ -25,6 +26,7 @@ fun ExpandableFAB(
     appLanguage: AppLanguage,
     onAddRecipe: () -> Unit,
     onImportCode: () -> Unit,
+    onOpenCookbooks: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -56,6 +58,19 @@ fun ExpandableFAB(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(bottom = 16.dp)
         ) {
+            if (onOpenCookbooks != null) {
+                FabBubble(
+                    visible = expanded,
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    label = t(appLanguage, "Cookbook PDF", "Libro PDF", "PDF Sách", "Kokebok PDF"),
+                    onClick = {
+                        expanded = false
+                        onOpenCookbooks()
+                    },
+                    index = 2
+                )
+            }
+
             FabBubble(
                 visible = expanded,
                 icon = Icons.Default.FileDownload,

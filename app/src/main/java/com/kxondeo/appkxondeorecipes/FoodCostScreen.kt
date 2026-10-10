@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
@@ -55,6 +57,9 @@ fun FoodCostScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { onOpenCookbooks?.invoke() }) {
+                        Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = "Libros de Cocina", tint = KxRed)
+                    }
                     IconButton(onClick = { showAddFolderDialog = true }) {
                         Icon(Icons.Default.CreateNewFolder, contentDescription = "Add Folder")
                     }
@@ -71,14 +76,44 @@ fun FoodCostScreen(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 if (currentFolderId == null && onOpenCookbooks != null) {
                     item {
-                        ListItem(
-                            headlineContent = { Text(if (isSpanish) "Libros de Cocina (PDF)" else "Cookbooks (PDF)", fontWeight = FontWeight.Bold) },
-                            supportingContent = { Text(if (isSpanish) "Cargar y previsualizar PDFs, extraer recetas" else "Upload & preview PDFs, extract recipes") },
-                            leadingContent = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = KxRed) },
-                            trailingContent = { Icon(Icons.Default.ChevronRight, contentDescription = null) },
-                            modifier = Modifier.clickable { onOpenCookbooks() }
-                        )
-                        HorizontalDivider()
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .clickable { onOpenCookbooks() },
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = KxRed,
+                                    modifier = Modifier.size(44.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = Color.White)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = if (isSpanish) "Libros de Cocina (PDF)" else "Cookbooks (PDF)",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = if (isSpanish) "Cargar y previsualizar PDFs o extraer recetas" else "Upload & preview PDFs or extract recipes",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                    )
+                                }
+                                Icon(Icons.Default.ChevronRight, contentDescription = null)
+                            }
+                        }
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                     }
                 }
                 items(subfolders) { folder ->
