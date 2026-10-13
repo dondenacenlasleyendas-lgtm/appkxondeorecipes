@@ -3,131 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kxondeo Recipes - Gestión Profesional de Cocina, Escandallos y PDFs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <title>Kxondeo Recipes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
-            --primary: #E53935;
-            --primary-dark: #C62828;
-            --bg: #0F172A;
-            --card-bg: #1E293B;
-            --text: #F8FAFC;
-            --text-muted: #94A3B8;
-            --accent: #38BDF8;
+            --bg-dark: #0A0E1A;
+            --card-bg: #13192B;
+            --primary-red: #E53935;
+            --text-main: #FFFFFF;
+            --text-muted: #8C9BAE;
+            --pill-white: #FFFFFF;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem 2rem;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--primary);
+        /* App Container Layout */
+        .app-layout {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
         }
 
-        .menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(229, 57, 53, 0.15);
-            color: var(--text);
-            border: 1px solid rgba(229, 57, 53, 0.4);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.2s;
-        }
-
-        .menu-btn:hover {
-            background: var(--primary);
-            color: #FFF;
-        }
-
-        nav.desktop-nav {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-        }
-
-        nav.desktop-nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        nav.desktop-nav a:hover {
-            color: var(--primary);
-        }
-
-        /* Sidebar Drawer */
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 200;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .drawer-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .drawer-sheet {
-            position: fixed;
-            top: 0;
-            left: -320px;
-            width: 300px;
-            height: 100%;
-            background: #1E293B;
-            z-index: 201;
-            padding: 2rem 1.5rem;
+        /* Side Navigation Drawer matching Image 1 */
+        .drawer {
+            width: 280px;
+            background-color: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-            transition: left 0.3s ease;
-            border-right: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .drawer-sheet.active {
-            left: 0;
+            padding: 1.5rem 1.2rem;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .drawer-header {
@@ -135,262 +60,874 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-right: 0.5rem;
         }
 
-        .drawer-header h2 {
-            font-size: 1.2rem;
-            color: var(--primary);
-            font-weight: 800;
+        .drawer-logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--primary-red);
+            letter-spacing: 0.5px;
         }
 
-        .close-btn {
+        .drawer-close-btn {
             background: none;
             border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
+            color: var(--text-main);
+            font-size: 1.4rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
         }
 
         .drawer-menu {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.4rem;
         }
 
-        .drawer-item {
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.2rem;
+            border-radius: 50px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* White Pill for Selected Item matching Image 1 */
+        .menu-item.selected {
+            background-color: var(--pill-white);
+            color: var(--primary-red);
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+        }
+
+        .menu-item.selected .icon {
+            color: var(--primary-red);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 1.5rem 0;
+        }
+
+        .admin-header {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+            padding-left: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* Main Content View matching Image 1 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            background-color: var(--bg-dark);
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.8rem;
+            background-color: var(--bg-dark);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .app-title-red {
+            font-size: 1.4rem;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--primary-red);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0.4rem;
+        }
+
+        .content-body {
+            padding: 0 1.8rem 6rem 1.8rem;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .screen-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-red);
+            margin-bottom: 1.2rem;
+        }
+
+        .search-box {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.85rem 1.2rem;
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            padding: 0.8rem 1rem;
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: background 0.2s, color 0.2s;
+            margin-bottom: 1.5rem;
         }
 
-        .drawer-item:hover {
-            background: rgba(229, 57, 53, 0.2);
-            color: var(--primary);
+        .search-input {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1rem;
+            width: 100%;
         }
 
-        .drawer-item.active-item {
-            background: var(--primary);
-            color: #FFF;
+        .search-input:focus {
+            outline: none;
         }
 
-        .hero {
-            padding: 4rem 2rem;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 1.2rem;
-            background: linear-gradient(135deg, #FFF, #94A3B8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
+        .search-input::placeholder {
             color: var(--text-muted);
-            margin-bottom: 2rem;
         }
 
-        .badge {
-            display: inline-block;
-            background: rgba(229, 57, 53, 0.15);
-            color: var(--primary);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
+        /* Folder & Item Cards matching Image 1 */
+        .folders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .folder-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            padding: 1.1rem 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-2px);
+            background-color: #1A233A;
+        }
+
+        .folder-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .folder-icon {
+            color: var(--primary-red);
+            font-size: 1.5rem;
+        }
+
+        .folder-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .folder-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .folder-right {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Navigation Bar matching Image 1 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 280px;
+            right: 0;
+            height: 70px;
+            background-color: var(--bg-dark);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 90;
+            transition: left 0.3s ease;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(229, 57, 53, 0.3);
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem 2rem 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        .bottom-nav-item.active {
+            color: var(--primary-red);
+            font-weight: 800;
         }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .fab-center {
+            width: 52px;
+            height: 52px;
+            background-color: var(--primary-red);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #FFF;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 20px rgba(229, 57, 53, 0.5);
+            cursor: pointer;
+            transform: translateY(-12px);
+            border: 4px solid var(--bg-dark);
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background-color: var(--card-bg);
             border-radius: 16px;
             padding: 2rem;
-            transition: transform 0.2s, border-color 0.2s;
-            scroll-margin-top: 100px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(229, 57, 53, 0.3);
+        .form-group {
+            margin-bottom: 1.2rem;
         }
 
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .card p {
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
         }
 
-        footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem 2rem;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        .form-input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
         }
 
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
         }
 
-        @media (max-width: 768px) {
-            nav.desktop-nav {
-                display: none;
+        .btn-red {
+            background-color: var(--primary-red);
+            color: #FFF;
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-gray {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 850px) {
+            .drawer {
+                position: fixed;
+                left: -280px;
+            }
+            .drawer.open {
+                transform: translateX(280px);
+            }
+            .bottom-nav {
+                left: 0;
             }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo" onclick="toggleDrawer()">
-            <span>🍳</span> KXONDEO RECIPES
-        </div>
+    <div class="app-layout">
 
-        <button class="menu-btn" onclick="toggleDrawer()">
-            ☰ MENÚ LATERAL
-        </button>
+        <!-- 1. LEFT SIDE NAVIGATION DRAWER matching Image 1 -->
+        <aside class="drawer" id="sideDrawer">
+            <div class="drawer-header">
+                <div class="drawer-logo">MENU</div>
+                <button class="drawer-close-btn" onclick="toggleDrawer()">←</button>
+            </div>
 
-        <nav class="desktop-nav">
-            <a href="#cookbooks">📖 Libros PDF</a>
-            <a href="#recipes">🍽️ Recetas</a>
-            <a href="#menu">📋 Menú</a>
-            <a href="#timer">⏱️ Timer</a>
-            <a href="#salary">💰 Salario</a>
-            <a href="privacy.html">🔒 Privacidad</a>
-        </nav>
-    </header>
+            <div class="drawer-menu">
+                <div class="menu-item selected" id="item-recipes" onclick="switchView('recipes')">
+                    <span class="icon">🍴</span>
+                    <span>Recetas</span>
+                </div>
 
-    <!-- Side Navigation Drawer Overlay -->
-    <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
+                <div class="menu-item" id="item-menu" onclick="switchView('menu')">
+                    <span class="icon">📅</span>
+                    <span>Menú</span>
+                </div>
 
-    <!-- Side Navigation Drawer Sheet -->
-    <div class="drawer-sheet" id="drawer">
-        <div class="drawer-header">
-            <h2>🍳 MENÚ LATERAL</h2>
-            <button class="close-btn" onclick="toggleDrawer()">✕</button>
-        </div>
+                <div class="menu-item" id="item-timer" onclick="switchView('timer')">
+                    <span class="icon">⏱️</span>
+                    <span>Timer</span>
+                </div>
 
-        <div class="drawer-menu">
-            <a href="#cookbooks" class="drawer-item active-item" onclick="toggleDrawer()">
-                <span>📖</span> Libros de Cocina (PDF)
-            </a>
-            <a href="#recipes" class="drawer-item" onclick="toggleDrawer()">
-                <span>🍽️</span> Recetas y Escandallos
-            </a>
-            <a href="#menu" class="drawer-item" onclick="toggleDrawer()">
-                <span>📋</span> Menú y Planificación
-            </a>
-            <a href="#timer" class="drawer-item" onclick="toggleDrawer()">
-                <span>⏱️</span> Timer de Cocina
-            </a>
-            <a href="#salary" class="drawer-item" onclick="toggleDrawer()">
-                <span>💰</span> Cálculo de Salario
-            </a>
-            <a href="#teams" class="drawer-item" onclick="toggleDrawer()">
-                <span>👥</span> Mi Equipo
-            </a>
-            <a href="privacy.html" class="drawer-item" onclick="toggleDrawer()">
-                <span>🔒</span> Política de Privacidad
-            </a>
+                <div class="menu-item" id="item-salary" onclick="switchView('salary')">
+                    <span class="icon">💵</span>
+                    <span>Cálculo Salario</span>
+                </div>
+
+                <div class="menu-item" id="item-cookbooks" onclick="switchView('cookbooks')">
+                    <span class="icon">📖</span>
+                    <span>Libros de Cocina (PDF)</span>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="admin-header">GESTIÓN ADMIN</div>
+
+                <div class="menu-item" id="item-teams" onclick="switchView('teams')">
+                    <span class="icon">👤</span>
+                    <span>Equipos</span>
+                </div>
+
+                <div class="menu-item" id="item-foodcost" onclick="switchView('foodcost')">
+                    <span class="icon">🔗</span>
+                    <span>Escandallos / Food Cost</span>
+                </div>
+
+                <div class="menu-item" id="item-costepersonal" onclick="switchView('costepersonal')">
+                    <span class="icon">💼</span>
+                    <span>Coste Personal</span>
+                </div>
+
+                <div class="menu-item" id="item-eventos" onclick="switchView('eventos')">
+                    <span class="icon">📅</span>
+                    <span>Eventos</span>
+                </div>
+
+                <div class="menu-item" id="item-cuadrantes" onclick="switchView('cuadrantes')">
+                    <span class="icon">🔲</span>
+                    <span>Cuadrantes</span>
+                </div>
+
+                <div class="menu-item" id="item-inventario" onclick="switchView('inventario')">
+                    <span class="icon">📦</span>
+                    <span>Inventario</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. MAIN CONTENT VIEW matching Image 1 -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-btn" onclick="toggleDrawer()">☰</button>
+                    <div class="app-title-red" id="headerTitle">KXONDEO</div>
+                </div>
+                <div class="header-actions">
+                    <button class="action-icon-btn" onclick="switchView('cookbooks')" title="Libros PDF">📖</button>
+                    <button class="action-icon-btn" onclick="openNewFolderModal()" title="Nueva Carpeta">📁+</button>
+                </div>
+            </header>
+
+            <div class="content-body">
+
+                <!-- VIEW 1: RECETAS / RECIPES -->
+                <div id="view-recipes">
+                    <h1 class="screen-title" id="mainScreenTitle">Recipes</h1>
+
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Buscar recetas o carpetas..." oninput="filterContent()">
+                    </div>
+
+                    <div class="folders-list" id="foldersContainer">
+                        <!-- Folder Cards matching Image 1 -->
+                        <div class="folder-card" onclick="switchView('cookbooks')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📖</span>
+                                <div>
+                                    <div class="folder-title">Libros de Cocina (PDF)</div>
+                                    <div class="folder-meta">Cargar PDFs, previsualizar y extraer recetas</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+
+                        <div class="folder-card" onclick="openFolder('Carne')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📁</span>
+                                <div>
+                                    <div class="folder-title">Carne</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+
+                        <div class="folder-card" onclick="openFolder('Ensaladas')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📁</span>
+                                <div>
+                                    <div class="folder-title">Ensaladas</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+
+                        <div class="folder-card" onclick="openFolder('Kxondeo recipes')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📁</span>
+                                <div>
+                                    <div class="folder-title">Kxondeo recipes</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+
+                        <div class="folder-card" onclick="openFolder('Pescado')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📁</span>
+                                <div>
+                                    <div class="folder-title">Pescado</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+
+                        <div class="folder-card" onclick="openFolder('Postres')">
+                            <div class="folder-left">
+                                <span class="folder-icon">📁</span>
+                                <div>
+                                    <div class="folder-title">Postres</div>
+                                </div>
+                            </div>
+                            <div class="folder-right">
+                                <span>▶</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipes Cards List -->
+                    <div id="recipesContainer" style="margin-top: 1.5rem;" class="folders-list"></div>
+                </div>
+
+                <!-- VIEW 2: LIBROS DE COCINA (PDF) -->
+                <div id="view-cookbooks" style="display: none;">
+                    <h1 class="screen-title">Libros de Cocina (PDF)</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Carga archivos PDF de tus libros de cocina para previsualizar sus páginas de inmediato o extraer sus recetas.</p>
+
+                    <div class="folder-card" style="border: 2px dashed var(--primary-red); justify-content: center; padding: 2.5rem; flex-direction: column;" onclick="document.getElementById('pdfInput').click()">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">Cargar Libro de Cocina PDF</div>
+                        <button class="btn-red" type="button">➕ SELECCIONAR ARCHIVO PDF</button>
+                        <input type="file" id="pdfInput" accept="application/pdf" style="display: none;" onchange="handlePdfUpload(event)">
+                    </div>
+
+                    <div id="cookbookList"></div>
+
+                    <div id="pdfViewerArea" style="display: none; margin-top: 2rem; background: #000; padding: 1.5rem; border-radius: 14px; text-align: center;">
+                        <h3 id="viewerTitle" style="margin-bottom: 1rem; color: #FFF;"></h3>
+                        <canvas id="pdfCanvas"></canvas>
+                        <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; align-items: center;">
+                            <button class="btn-gray" onclick="changePage(-1)">◀ Anterior</button>
+                            <span id="pageNumDisplay">Página 1</span>
+                            <button class="btn-gray" onclick="changePage(1)">Siguiente ▶</button>
+                            <button class="btn-red" onclick="extractRecipesFromCurrentPdf()">✨ Extraer Recetas</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: TIMER -->
+                <div id="view-timer" style="display: none;">
+                    <h1 class="screen-title">Timer de Cocina</h1>
+                    <div style="text-align: center; margin-top: 3rem;">
+                        <div id="timerDisplay" style="font-size: 5rem; font-weight: 900; color: var(--primary-red);">05:00</div>
+                        <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 1rem;">
+                            <button class="btn-red" onclick="toggleTimer()">▶ Iniciar / Pausa</button>
+                            <button class="btn-gray" onclick="resetTimer()">🔄 Resetear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: SALARIO -->
+                <div id="view-salary" style="display: none;">
+                    <h1 class="screen-title">Cálculo de Salario</h1>
+                    <div class="folder-card" style="flex-direction: column; align-items: flex-start;">
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">Cálculo Estimado Laboral</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--primary-red); margin: 0.5rem 0;" id="netSalaryDisplay">510.00 €</div>
+                        <div class="form-group" style="width: 100%; margin-top: 1rem;">
+                            <label class="form-label">Tarifa por hora (€/h)</label>
+                            <input type="number" class="form-input" id="hourlyRateInput" value="12.50" oninput="calculateSalary()">
+                        </div>
+                        <div class="form-group" style="width: 100%;">
+                            <label class="form-label">Horas trabajadas</label>
+                            <input type="number" class="form-input" id="hoursInput" value="40" oninput="calculateSalary()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OTHER VIEWS -->
+                <div id="view-generic" style="display: none;">
+                    <h1 class="screen-title" id="genericTitle">Gestión Admin</h1>
+                    <p style="color: var(--text-muted);" id="genericMessage">Sección de gestión activa.</p>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM NAVIGATION BAR matching Image 1 -->
+            <nav class="bottom-nav">
+                <div class="bottom-nav-item active" id="tab-recipes" onclick="switchView('recipes')">
+                    <span style="font-size: 1.2rem;">🍴</span>
+                    <span>Recetas</span>
+                </div>
+
+                <div class="bottom-nav-item" id="tab-menu" onclick="switchView('menu')">
+                    <span style="font-size: 1.2rem;">📅</span>
+                    <span>Menú</span>
+                </div>
+
+                <div class="fab-center" onclick="openNewRecipeModal()">+</div>
+
+                <div class="bottom-nav-item" id="tab-timer" onclick="switchView('timer')">
+                    <span style="font-size: 1.2rem;">⏱️</span>
+                    <span>Timer</span>
+                </div>
+
+                <div class="bottom-nav-item" id="tab-salary" onclick="switchView('salary')">
+                    <span style="font-size: 1.2rem;">💵</span>
+                    <span>Salario</span>
+                </div>
+            </nav>
+        </main>
+    </div>
+
+    <!-- MODAL: Crear / Editar Receta -->
+    <div class="modal-overlay" id="recipeModal">
+        <div class="modal-box">
+            <h2 style="color: var(--primary-red); margin-bottom: 1.5rem;" id="modalHeading">Nueva Receta</h2>
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <label class="form-label">Nombre de la Receta *</label>
+                <input type="text" class="form-input" id="recipeName" placeholder="Ej: Paella de Marisco">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Raciones</label>
+                <input type="number" class="form-input" id="recipePortions" value="4">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn-gray" onclick="closeModal()">Cancelar</button>
+                <button class="btn-red" onclick="saveRecipe()">Guardar</button>
+            </div>
         </div>
     </div>
 
-    <section class="hero">
-        <div class="badge">Novedad v1.0 • Carga de PDFs y Extracción de Recetas</div>
-        <h1>Gestión Profesional de Cocina, PDFs y Escandallos</h1>
-        <p>Abre el Menú Lateral (☰) para acceder a Libros de Cocina PDF, Recetas, Planificador de Menú, Timer y Calculadora de Salario.</p>
-    </section>
-
-    <section class="features" id="features">
-        <div class="card" id="cookbooks">
-            <div class="card-icon">📖</div>
-            <h3>Libros de Cocina (PDF)</h3>
-            <p>Sube tus libros de cocina en formato PDF, previsualiza sus páginas y extrae automáticamente los ingredientes y pasos de las recetas.</p>
-        </div>
-
-        <div class="card" id="recipes">
-            <div class="card-icon">📊</div>
-            <h3>Recetas y Escandallos</h3>
-            <p>Calcula el coste por ración, margen de beneficio objetivo e impuestos con plantillas automáticas de costes de alimentos.</p>
-        </div>
-
-        <div class="card" id="menu">
-            <div class="card-icon">📋</div>
-            <h3>Menú y Planificación</h3>
-            <p>Organiza el menú semanal del restaurante asignando platos y recetas a cada día de la semana.</p>
-        </div>
-
-        <div class="card" id="timer">
-            <div class="card-icon">⏱️</div>
-            <h3>Timer de Cocina</h3>
-            <p>Temporizador multifunción optimizado para chefs con presets rápidos para tiempos de cocción exactos.</p>
-        </div>
-
-        <div class="card" id="salary">
-            <div class="card-icon">💰</div>
-            <h3>Cálculo de Salario</h3>
-            <p>Herramienta para estimar salarios netos, brutos y costes laborales de personal en restauración.</p>
-        </div>
-
-        <div class="card" id="teams">
-            <div class="card-icon">👥</div>
-            <h3>Colaboración en Equipo</h3>
-            <p>Comparte carpetas y recetas en tiempo real con los miembros de tu brigada de cocina.</p>
-        </div>
-    </section>
-
-    <footer>
-        <p>© 2026 Kxondeo Recipes • Operado por <strong>Kxondeo Enrique Calvo Puente</strong> (Noruega)</p>
-        <p style="margin-top: 0.5rem;"><a href="privacy.html">Política de Privacidad</a> | Contacto: dondenacenlasleyendas@gmail.com</p>
-    </footer>
-
     <script>
-        function clearAllRecipes() {
-            if (confirm("¿Deseas eliminar todas las recetas (incluidas las 100 salsas extraídas del PDF)?")) {
-                savedRecipes = [];
-                saveRecipesToStorage();
-                alert("¡Todas las recetas han sido eliminadas correctamente!");
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let recipesData = JSON.parse(localStorage.getItem('kx_recipes_list')) || [
+            { id: 1, title: "Paella de Marisco", portions: 4, cost: 14.50 },
+            { id: 2, title: "Gazpacho Andaluz", portions: 6, cost: 4.20 }
+        ];
+
+        let currentPdfDoc = null;
+        let currentPageNum = 1;
+
+        function renderRecipesList() {
+            const container = document.getElementById('recipesContainer');
+            if (recipesData.length === 0) {
+                container.innerHTML = '';
+                return;
             }
+
+            container.innerHTML = recipesData.map(r => `
+                <div class="folder-card">
+                    <div class="folder-left">
+                        <span class="folder-icon">🍳</span>
+                        <div>
+                            <div class="folder-title">${r.title}</div>
+                            <div class="folder-meta">${r.portions} raciones • Coste: ${parseFloat(r.cost || 10).toFixed(2)} €</div>
+                        </div>
+                    </div>
+                    <div class="folder-right">
+                        <button style="background:none; border:none; color: var(--accent); cursor:pointer; font-size:1.1rem;" onclick="editRecipeItem(${r.id})">✏️</button>
+                        <button style="background:none; border:none; color: var(--primary-red); cursor:pointer; font-size:1.1rem;" onclick="deleteRecipeItem(${r.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteRecipeItem(id) {
+            recipesData = recipesData.filter(r => r.id !== id);
+            localStorage.setItem('kx_recipes_list', JSON.stringify(recipesData));
+            renderRecipesList();
+        }
+
+        function editRecipeItem(id) {
+            const r = recipesData.find(item => item.id === id);
+            if (!r) return;
+            document.getElementById('editId').value = r.id;
+            document.getElementById('recipeName').value = r.title;
+            document.getElementById('recipePortions').value = r.portions;
+            document.getElementById('modalHeading').innerText = "Editar Receta";
+            document.getElementById('recipeModal').classList.add('active');
+        }
+
+        function openNewRecipeModal() {
+            document.getElementById('editId').value = '';
+            document.getElementById('recipeName').value = '';
+            document.getElementById('recipePortions').value = '4';
+            document.getElementById('modalHeading').innerText = "Nueva Receta";
+            document.getElementById('recipeModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('recipeModal').classList.remove('active');
+        }
+
+        function saveRecipe() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('recipeName').value.trim();
+            const portions = parseInt(document.getElementById('recipePortions').value) || 1;
+
+            if (!name) return;
+
+            if (id) {
+                const idx = recipesData.findIndex(r => r.id == id);
+                if (idx >= 0) recipesData[idx] = { ...recipesData[idx], title: name, portions };
+            } else {
+                recipesData.push({ id: Date.now(), title: name, portions, cost: 10.00 });
+            }
+
+            localStorage.setItem('kx_recipes_list', JSON.stringify(recipesData));
+            renderRecipesList();
+            closeModal();
         }
 
         function toggleDrawer() {
-            document.getElementById('overlay').classList.toggle('active');
-            document.getElementById('drawer').classList.toggle('active');
+            document.getElementById('sideDrawer').classList.toggle('open');
         }
+
+        function switchView(viewName) {
+            // Unselect all menu items
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+
+            // Hide all views
+            ['recipes', 'cookbooks', 'timer', 'salary', 'generic'].forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if (el) el.style.display = 'none';
+            });
+
+            // Highlight selected
+            const menuItem = document.getElementById('item-' + viewName);
+            if (menuItem) menuItem.classList.add('selected');
+
+            if (viewName === 'recipes') {
+                document.getElementById('view-recipes').style.display = 'block';
+                document.getElementById('tab-recipes').classList.add('active');
+            } else if (viewName === 'cookbooks') {
+                document.getElementById('view-cookbooks').style.display = 'block';
+            } else if (viewName === 'timer') {
+                document.getElementById('view-timer').style.display = 'block';
+                document.getElementById('tab-timer').classList.add('active');
+            } else if (viewName === 'salary' || viewName === 'salary_calculator' || viewName === 'costepersonal') {
+                document.getElementById('view-salary').style.display = 'block';
+                document.getElementById('tab-salary').classList.add('active');
+            } else {
+                const generic = document.getElementById('view-generic');
+                generic.style.display = 'block';
+                document.getElementById('genericTitle').innerText = viewName.toUpperCase();
+            }
+        }
+
+        function filterContent() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.folder-card').forEach(card => {
+                const title = card.innerText.toLowerCase();
+                card.style.display = title.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function handlePdfUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                const typedarray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+                    currentPdfDoc = pdf;
+                    currentPageNum = 1;
+                    renderPdfPage(1);
+                    document.getElementById('pdfViewerArea').style.display = 'block';
+                    document.getElementById('viewerTitle').innerText = file.name + " (" + pdf.numPages + " págs)";
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderPdfPage(num) {
+            if (!currentPdfDoc) return;
+            currentPdfDoc.getPage(num).then(page => {
+                const canvas = document.getElementById('pdfCanvas');
+                const ctx = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale: 1.2 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                page.render({ canvasContext: ctx, viewport });
+                document.getElementById('pageNumDisplay').innerText = "Página " + num + " de " + currentPdfDoc.numPages;
+            });
+        }
+
+        function changePage(delta) {
+            if (!currentPdfDoc) return;
+            const newNum = currentPageNum + delta;
+            if (newNum >= 1 && newNum <= currentPdfDoc.numPages) {
+                currentPageNum = newNum;
+                renderPdfPage(currentPageNum);
+            }
+        }
+
+        function extractRecipesFromCurrentPdf() {
+            recipesData.push({ id: Date.now(), title: "Receta Extraída de PDF", portions: 4, cost: 12.00 });
+            localStorage.setItem('kx_recipes_list', JSON.stringify(recipesData));
+            renderRecipesList();
+            alert("¡Receta extraída e importada a tus Recetas!");
+            switchView('recipes');
+        }
+
+        // Timer Logic
+        let timerSeconds = 300;
+        let timerInterval = null;
+
+        function toggleTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            } else {
+                timerInterval = setInterval(() => {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert("¡Tiempo cumplido!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            timerSeconds = 300;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const min = Math.floor(timerSeconds / 60);
+            const sec = timerSeconds % 60;
+            document.getElementById('timerDisplay').innerText = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+        }
+
+        function calculateSalary() {
+            const rate = parseFloat(document.getElementById('hourlyRateInput').value) || 0;
+            const hours = parseFloat(document.getElementById('hoursInput').value) || 0;
+            document.getElementById('netSalaryDisplay').innerText = (rate * hours * 0.85).toFixed(2) + " €";
+        }
+
+        // Initialize
+        renderRecipesList();
     </script>
 </body>
 </html>
