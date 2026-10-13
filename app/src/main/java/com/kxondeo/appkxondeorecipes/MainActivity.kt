@@ -95,7 +95,8 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onMoveFoodCost = { _, _ -> },
                                 onOpenCookbooks = { currentScreen = "cookbooks" },
-                                onNavigateTab = { tabScreen -> currentScreen = tabScreen }
+                                onNavigateTab = { tabScreen -> currentScreen = tabScreen },
+                                onClearAllRecipes = { foodCosts.clear() }
                             )
                             "cost_detail" -> FoodCostDetailScreen(
                                 costToEdit = selectedCost,

@@ -39,10 +39,12 @@ fun FoodCostScreen(
     onDeleteFoodCost: (Int) -> Unit,
     onMoveFoodCost: (Int, Int?) -> Unit,
     onOpenCookbooks: (() -> Unit)? = null,
-    onNavigateTab: ((String) -> Unit)? = null
+    onNavigateTab: ((String) -> Unit)? = null,
+    onClearAllRecipes: (() -> Unit)? = null
 ) {
     var currentFolderId by remember { mutableStateOf<Int?>(null) }
     var showAddFolderDialog by remember { mutableStateOf(false) }
+    var showClearAllDialog by remember { mutableStateOf(false) }
     var folderToDelete by remember { mutableStateOf<Folder?>(null) }
     var costToDelete by remember { mutableStateOf<FoodCost?>(null) }
     var newFolderName by remember { mutableStateOf("") }
@@ -83,6 +85,11 @@ fun FoodCostScreen(
                     }
                 },
                 actions = {
+                    if (foodCosts.isNotEmpty() && onClearAllRecipes != null) {
+                        IconButton(onClick = { showClearAllDialog = true }) {
+                            Icon(Icons.Default.DeleteSweep, contentDescription = "Vaciar Recetas", tint = MaterialTheme.colorScheme.error)
+                        }
+                    }
                     IconButton(onClick = { onOpenCookbooks?.invoke() }) {
                         Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = "Libros PDF", tint = KxRed)
                     }
@@ -269,6 +276,30 @@ fun FoodCostScreen(
                 TextButton(onClick = { if (newFolderName.isNotBlank()) { onAddFolder(newFolderName, currentFolderId); newFolderName = ""; showAddFolderDialog = false } }) { Text(if (isSpanish) "Crear" else "Create") }
             },
             dismissButton = { TextButton(onClick = { showAddFolderDialog = false }) { Text(if (isSpanish) "Cancelar" else "Cancel") } }
+        )
+    }
+
+    if (showClearAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearAllDialog = false },
+            title = { Text(if (isSpanish) "Eliminar todas las recetas" else "Delete all recipes") },
+            text = { Text(if (isSpanish) "¿Estás seguro de que deseas eliminar las ${foodCosts.size} recetas registradas?" else "Are you sure you want to delete all ${foodCosts.size} recipes?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onClearAllRecipes?.invoke()
+                        showClearAllDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(if (isSpanish) "Eliminar Todas" else "Delete All")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearAllDialog = false }) {
+                    Text(if (isSpanish) "Cancelar" else "Cancel")
+                }
+            }
         )
     }
 

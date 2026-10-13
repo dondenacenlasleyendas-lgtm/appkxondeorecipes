@@ -379,6 +379,14 @@
     </footer>
 
     <script>
+        function clearAllRecipes() {
+            if (confirm("¿Deseas eliminar todas las recetas (incluidas las 100 salsas extraídas del PDF)?")) {
+                savedRecipes = [];
+                saveRecipesToStorage();
+                alert("¡Todas las recetas han sido eliminadas correctamente!");
+            }
+        }
+
         function toggleDrawer() {
             document.getElementById('overlay').classList.toggle('active');
             document.getElementById('drawer').classList.toggle('active');
