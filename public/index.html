@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kxondeo Recipes - Gestión Profesional de Cocina, Escandallos y PDFs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E53935;
+            --primary-dark: #C62828;
+            --bg: #0F172A;
+            --card-bg: #1E293B;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent: #38BDF8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(229, 57, 53, 0.15);
+            color: var(--text);
+            border: 1px solid rgba(229, 57, 53, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: var(--primary);
+            color: #FFF;
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        nav.desktop-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        nav.desktop-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Sidebar Drawer */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer-sheet {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100%;
+            background: #1E293B;
+            z-index: 201;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+            transition: left 0.3s ease;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .drawer-sheet.active {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .drawer-header h2 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .drawer-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .drawer-item:hover {
+            background: rgba(229, 57, 53, 0.2);
+            color: var(--primary);
+        }
+
+        .drawer-item.active-item {
+            background: var(--primary);
+            color: #FFF;
+        }
+
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #FFF, #94A3B8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(229, 57, 53, 0.15);
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(229, 57, 53, 0.3);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 2rem 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.2s, border-color 0.2s;
+            scroll-margin-top: 100px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(229, 57, 53, 0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            nav.desktop-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="toggleDrawer()">
+            <span>🍳</span> KXONDEO RECIPES
+        </div>
+
+        <button class="menu-btn" onclick="toggleDrawer()">
+            ☰ MENÚ LATERAL
+        </button>
+
+        <nav class="desktop-nav">
+            <a href="#cookbooks">📖 Libros PDF</a>
+            <a href="#recipes">🍽️ Recetas</a>
+            <a href="#menu">📋 Menú</a>
+            <a href="#timer">⏱️ Timer</a>
+            <a href="#salary">💰 Salario</a>
+            <a href="privacy.html">🔒 Privacidad</a>
+        </nav>
+    </header>
+
+    <!-- Side Navigation Drawer Overlay -->
+    <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+    <!-- Side Navigation Drawer Sheet -->
+    <div class="drawer-sheet" id="drawer">
+        <div class="drawer-header">
+            <h2>🍳 MENÚ LATERAL</h2>
+            <button class="close-btn" onclick="toggleDrawer()">✕</button>
+        </div>
+
+        <div class="drawer-menu">
+            <a href="#cookbooks" class="drawer-item active-item" onclick="toggleDrawer()">
+                <span>📖</span> Libros de Cocina (PDF)
+            </a>
+            <a href="#recipes" class="drawer-item" onclick="toggleDrawer()">
+                <span>🍽️</span> Recetas y Escandallos
+            </a>
+            <a href="#menu" class="drawer-item" onclick="toggleDrawer()">
+                <span>📋</span> Menú y Planificación
+            </a>
+            <a href="#timer" class="drawer-item" onclick="toggleDrawer()">
+                <span>⏱️</span> Timer de Cocina
+            </a>
+            <a href="#salary" class="drawer-item" onclick="toggleDrawer()">
+                <span>💰</span> Cálculo de Salario
+            </a>
+            <a href="#teams" class="drawer-item" onclick="toggleDrawer()">
+                <span>👥</span> Mi Equipo
+            </a>
+            <a href="privacy.html" class="drawer-item" onclick="toggleDrawer()">
+                <span>🔒</span> Política de Privacidad
+            </a>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="badge">Novedad v1.0 • Carga de PDFs y Extracción de Recetas</div>
+        <h1>Gestión Profesional de Cocina, PDFs y Escandallos</h1>
+        <p>Abre el Menú Lateral (☰) para acceder a Libros de Cocina PDF, Recetas, Planificador de Menú, Timer y Calculadora de Salario.</p>
+    </section>
+
+    <section class="features" id="features">
+        <div class="card" id="cookbooks">
+            <div class="card-icon">📖</div>
+            <h3>Libros de Cocina (PDF)</h3>
+            <p>Sube tus libros de cocina en formato PDF, previsualiza sus páginas y extrae automáticamente los ingredientes y pasos de las recetas.</p>
+        </div>
+
+        <div class="card" id="recipes">
+            <div class="card-icon">📊</div>
+            <h3>Recetas y Escandallos</h3>
+            <p>Calcula el coste por ración, margen de beneficio objetivo e impuestos con plantillas automáticas de costes de alimentos.</p>
+        </div>
+
+        <div class="card" id="menu">
+            <div class="card-icon">📋</div>
+            <h3>Menú y Planificación</h3>
+            <p>Organiza el menú semanal del restaurante asignando platos y recetas a cada día de la semana.</p>
+        </div>
+
+        <div class="card" id="timer">
+            <div class="card-icon">⏱️</div>
+            <h3>Timer de Cocina</h3>
+            <p>Temporizador multifunción optimizado para chefs con presets rápidos para tiempos de cocción exactos.</p>
+        </div>
+
+        <div class="card" id="salary">
+            <div class="card-icon">💰</div>
+            <h3>Cálculo de Salario</h3>
+            <p>Herramienta para estimar salarios netos, brutos y costes laborales de personal en restauración.</p>
+        </div>
+
+        <div class="card" id="teams">
+            <div class="card-icon">👥</div>
+            <h3>Colaboración en Equipo</h3>
+            <p>Comparte carpetas y recetas en tiempo real con los miembros de tu brigada de cocina.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Kxondeo Recipes • Operado por <strong>Kxondeo Enrique Calvo Puente</strong> (Noruega)</p>
+        <p style="margin-top: 0.5rem;"><a href="privacy.html">Política de Privacidad</a> | Contacto: dondenacenlasleyendas@gmail.com</p>
+    </footer>
+
+    <script>
+        function toggleDrawer() {
+            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('drawer').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
