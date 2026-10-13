@@ -36,19 +36,28 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
+                    // Folders matching user's screenshot
                     val folders = remember {
                         mutableStateListOf(
-                            Folder(1, "Entrantes", "Starters"),
-                            Folder(2, "Platos Principales", "Main Courses")
+                            Folder(1, "Carne", "Meat"),
+                            Folder(2, "Ensaladas", "Salads"),
+                            Folder(3, "Kxondeo recipes", "Kxondeo recipes"),
+                            Folder(4, "Pescado", "Fish"),
+                            Folder(5, "Postres", "Desserts")
                         )
                     }
 
                     val cookbooks = remember { mutableStateListOf<CookbookPdf>() }
                     var selectedCookbook by remember { mutableStateOf<CookbookPdf?>(null) }
                     var cookbookForExtraction by remember { mutableStateOf<CookbookPdf?>(null) }
+                    var selectedCost by remember { mutableStateOf<FoodCost?>(null) }
 
                     val onOpenDrawer: () -> Unit = {
                         scope.launch { drawerState.open() }
+                    }
+
+                    val onCloseDrawer: () -> Unit = {
+                        scope.launch { drawerState.close() }
                     }
 
                     val onNavigateDrawer: (String) -> Unit = { screen ->
@@ -60,7 +69,8 @@ class MainActivity : ComponentActivity() {
                         drawerState = drawerState,
                         currentScreen = currentScreen,
                         appLanguage = appLanguage,
-                        onNavigate = onNavigateDrawer
+                        onNavigate = onNavigateDrawer,
+                        onCloseDrawer = onCloseDrawer
                     ) {
                         when (currentScreen) {
                             "splash" -> SplashScreen(onNext = { currentScreen = "login" })
@@ -71,8 +81,8 @@ class MainActivity : ComponentActivity() {
                                 appLanguage = appLanguage,
                                 onMenuClick = onOpenDrawer,
                                 onBack = { currentScreen = "login" },
-                                onFoodCostClick = {},
-                                onAddFoodCost = {},
+                                onFoodCostClick = { selectedCost = it; currentScreen = "cost_detail" },
+                                onAddFoodCost = { selectedCost = null; currentScreen = "cost_detail" },
                                 onAddFolder = { name, parentId ->
                                     val newId = (folders.maxOfOrNull { it.id } ?: 0) + 1
                                     folders.add(Folder(newId, name, name, parentId))
@@ -84,7 +94,28 @@ class MainActivity : ComponentActivity() {
                                     foodCosts.removeAll { it.id == costId }
                                 },
                                 onMoveFoodCost = { _, _ -> },
-                                onOpenCookbooks = { currentScreen = "cookbooks" }
+                                onOpenCookbooks = { currentScreen = "cookbooks" },
+                                onNavigateTab = { tabScreen -> currentScreen = tabScreen }
+                            )
+                            "cost_detail" -> FoodCostDetailScreen(
+                                costToEdit = selectedCost,
+                                appLanguage = appLanguage,
+                                onBack = { selectedCost = null; currentScreen = "main" },
+                                onSave = { updated ->
+                                    val index = foodCosts.indexOfFirst { it.id == updated.id }
+                                    if (index >= 0) {
+                                        foodCosts[index] = updated
+                                    } else {
+                                        foodCosts.add(updated)
+                                    }
+                                    selectedCost = null
+                                    currentScreen = "main"
+                                },
+                                onDelete = { costId ->
+                                    foodCosts.removeAll { it.id == costId }
+                                    selectedCost = null
+                                    currentScreen = "main"
+                                }
                             )
                             "cookbooks" -> CookbookFolderScreen(
                                 cookbooks = cookbooks,
